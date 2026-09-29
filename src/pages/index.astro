@@ -491,9 +491,13 @@ import "../styles/global.css";
        * Start progress bar at 0%.
        */
 
-      progressFill.style.width =
-        "0%";
+      progressFill.style.width = "0%";
 
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    update();
+  });
+});
 
       /*
        * Set saved language.
