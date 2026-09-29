@@ -491,44 +491,56 @@ import "../styles/global.css";
        * Start progress bar at 0%.
        */
 
-      progressFill.style.width = "0%";
+     progressFill.style.width = "0%";
 
+/*
+ * Wait until the browser has painted the 0% state,
+ * then start the animation.
+ */
 requestAnimationFrame(() => {
+  progressFill.style.width = "0%";
+
   requestAnimationFrame(() => {
     update();
   });
 });
 
-      /*
-       * Set saved language.
-       */
+/*
+ * First calculate and display everything.
+ */
+update();
 
-      setLanguage(
-        currentLanguage
-      );
+/*
+ * Get the current progress width.
+ */
+const currentWidth =
+  progressFill.style.width;
 
+/*
+ * Reset the bar to 0%.
+ */
+progressFill.style.transition = "none";
+progressFill.style.width = "0%";
 
-      /*
-       * Wait briefly before first update
-       * so the progress bar animates from 0%.
-       */
+/*
+ * Force the browser to acknowledge the 0% state.
+ */
+progressFill.offsetWidth;
 
-      setTimeout(
-        () => {
-          update();
-        },
-        100
-      );
+/*
+ * Restore the animation and move to the
+ * actual percentage.
+ */
+progressFill.style.transition =
+  "width 3.5s linear";
 
+progressFill.style.width =
+  currentWidth;
 
-      /*
-       * Update countdown every second.
-       */
-
-      setInterval(
-        update,
-        1000
-      );
+/*
+ * Continue updating the countdown normally.
+ */
+setInterval(update, 1000);
 
     </script>
 
