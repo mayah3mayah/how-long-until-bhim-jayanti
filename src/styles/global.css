@@ -312,11 +312,6 @@ h1 {
     margin-bottom: 35px;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-  .progress-fill {
-    transition: none;
-  }
-
   .celebration-state.active .burst {
     animation: none;
     opacity: 1;
