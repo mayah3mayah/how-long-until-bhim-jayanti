@@ -1,0 +1,532 @@
+---
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="How long until Bhim Jayanti?" />
+    <title>Bhim Jayanti</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+
+    <!-- Language switcher -->
+    <div class="language-switcher">
+      <button class="language-button active" data-lang="en">EN</button>
+      <button class="language-button" data-lang="mr">मराठी</button>
+      <button class="language-button" data-lang="hi">हिन्दी</button>
+    </div>
+
+
+    <main class="page">
+      <div class="content">
+
+        <!-- Normal countdown -->
+        <div id="countdown-state">
+
+          <h1 id="title">
+            how long until<br />bhim jayanti?
+          </h1>
+
+          <div class="countdown" id="countdown">
+            00 days 00:00:00
+          </div>
+
+          <div class="progress-wrapper">
+
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                id="progress-fill"
+              ></div>
+            </div>
+
+            <div class="progress-info">
+              <span id="progress-text">0%</span>
+              <span id="date-text">14 April</span>
+            </div>
+
+          </div>
+
+          <button id="toggle" class="toggle">
+            show days left
+          </button>
+
+        </div>
+
+
+        <!-- Bhim Jayanti celebration -->
+        <div
+          id="celebration-state"
+          class="celebration-state"
+        >
+
+          <div class="burst burst-1"></div>
+          <div class="burst burst-2"></div>
+          <div class="burst burst-3"></div>
+          <div class="burst burst-4"></div>
+          <div class="burst burst-5"></div>
+          <div class="burst burst-6"></div>
+          <div class="burst burst-7"></div>
+          <div class="burst burst-8"></div>
+
+          <div
+            class="celebration-text"
+            id="celebration-text"
+          >
+            HAPPY<br />
+            BHIM JAYANTI
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+
+    <script>
+      const countdownState =
+        document.getElementById("countdown-state");
+
+      const celebrationState =
+        document.getElementById("celebration-state");
+
+      const countdown =
+        document.getElementById("countdown");
+
+      const progressFill =
+        document.getElementById("progress-fill");
+
+      const progressText =
+        document.getElementById("progress-text");
+
+      const dateText =
+        document.getElementById("date-text");
+
+      const toggle =
+        document.getElementById("toggle");
+
+      const title =
+        document.getElementById("title");
+
+      const celebrationText =
+        document.getElementById("celebration-text");
+
+      const languageButtons =
+        document.querySelectorAll(".language-button");
+
+
+      let showDays = false;
+
+      let currentLanguage =
+        localStorage.getItem("bhim-language") || "en";
+
+
+      /*
+       * Language translations
+       */
+
+      const translations = {
+
+        en: {
+          title:
+            "how long until<br />bhim jayanti?",
+
+          showDays:
+            "show days left",
+
+          showCountdown:
+            "show countdown",
+
+          celebration:
+            "HAPPY<br />BHIM JAYANTI",
+
+          date:
+            "14 April"
+        },
+
+        mr: {
+          title:
+            "भीम जयंतीला<br />किती दिवस बाकी आहे?",
+
+          showDays:
+            "दिवस दाखवा",
+
+          showCountdown:
+            "काउंटडाऊन दाखवा",
+
+          celebration:
+            "भीम जयंतीच्या<br />हार्दिक शुभेच्छा!",
+
+          date:
+            "१४ एप्रिल"
+        },
+
+        hi: {
+          title:
+            "भीम जयंती में<br />कितने दिन बाकी है?",
+
+          showDays:
+            "सिर्फ़ दिन दिखाएँ",
+
+          showCountdown:
+            "काउंटडाउन दिखाएँ",
+
+          celebration:
+            "भीम जयंती की<br />हार्दिक शुभकामनाएँ!",
+
+          date:
+            "14 अप्रैल"
+        }
+
+      };
+
+
+      /*
+       * Change language
+       */
+
+      function setLanguage(language) {
+
+        currentLanguage = language;
+
+        localStorage.setItem(
+          "bhim-language",
+          language
+        );
+
+        const t =
+          translations[language];
+
+        title.innerHTML =
+          t.title;
+
+        celebrationText.innerHTML =
+          t.celebration;
+
+        if (showDays) {
+          toggle.textContent =
+            t.showCountdown;
+        } else {
+          toggle.textContent =
+            t.showDays;
+        }
+
+        /*
+         * Highlight active language
+         */
+
+        languageButtons.forEach(
+          (button) => {
+
+            button.classList.toggle(
+              "active",
+              button.dataset.lang === language
+            );
+
+          }
+        );
+
+        /*
+         * Update date immediately
+         */
+
+        update();
+      }
+
+
+      /*
+       * Determine whether today
+       * is April 14.
+       */
+
+      function isBhimJayanti(now) {
+
+        return (
+          now.getMonth() === 3 &&
+          now.getDate() === 14
+        );
+
+      }
+
+
+      /*
+       * Find next Bhim Jayanti.
+       */
+
+      function getNextBhimJayanti(now) {
+
+        const year =
+          now.getFullYear();
+
+        const thisYear =
+          new Date(year, 3, 14);
+
+        if (now < thisYear) {
+          return thisYear;
+        }
+
+        return new Date(
+          year + 1,
+          3,
+          14
+        );
+
+      }
+
+
+      /*
+       * Main update function.
+       */
+
+      function update() {
+
+        const now =
+          new Date();
+
+
+        /*
+         * April 14 = celebration mode
+         */
+
+        if (isBhimJayanti(now)) {
+
+          countdownState.style.display =
+            "none";
+
+          celebrationState.classList.add(
+            "active"
+          );
+
+          return;
+        }
+
+
+        /*
+         * Normal countdown mode
+         */
+
+        countdownState.style.display =
+          "block";
+
+        celebrationState.classList.remove(
+          "active"
+        );
+
+
+        const next =
+          getNextBhimJayanti(now);
+
+
+        const previous =
+          new Date(
+            next.getFullYear() - 1,
+            3,
+            14
+          );
+
+
+        /*
+         * Progress calculation
+         */
+
+        const totalCycle =
+          next - previous;
+
+        const elapsed =
+          now - previous;
+
+        const percentage =
+          Math.min(
+            100,
+            Math.max(
+              0,
+              (elapsed / totalCycle) * 100
+            )
+          );
+
+
+        /*
+         * Countdown calculation
+         */
+
+        const difference =
+          next - now;
+
+        const totalSeconds =
+          Math.floor(
+            difference / 1000
+          );
+
+        const days =
+          Math.floor(
+            totalSeconds / 86400
+          );
+
+        const hours =
+          Math.floor(
+            (totalSeconds % 86400) / 3600
+          );
+
+        const minutes =
+          Math.floor(
+            (totalSeconds % 3600) / 60
+          );
+
+        const seconds =
+          totalSeconds % 60;
+
+
+        /*
+         * Display countdown
+         */
+
+        if (showDays) {
+
+          countdown.textContent =
+            `${days} days`;
+
+        } else {
+
+          countdown.textContent =
+            `${String(days).padStart(2, "0")} days ` +
+            `${String(hours).padStart(2, "0")}:` +
+            `${String(minutes).padStart(2, "0")}:` +
+            `${String(seconds).padStart(2, "0")}`;
+
+        }
+
+
+        /*
+         * Progress bar
+         */
+
+        progressFill.style.width =
+          `${percentage}%`;
+
+        progressText.textContent =
+          `${percentage.toFixed(2)}%`;
+
+
+        /*
+         * Target date
+         */
+
+        if (currentLanguage === "en") {
+
+          dateText.textContent =
+            `14 April ${next.getFullYear()}`;
+
+        } else if (currentLanguage === "mr") {
+
+          dateText.textContent =
+            `१४ एप्रिल ${next.getFullYear()}`;
+
+        } else {
+
+          dateText.textContent =
+            `14 अप्रैल ${next.getFullYear()}`;
+
+        }
+
+      }
+
+
+      /*
+       * Language button clicks
+       */
+
+      languageButtons.forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              setLanguage(
+                button.dataset.lang
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+      /*
+       * Countdown / days toggle
+       */
+
+      toggle.addEventListener(
+        "click",
+        () => {
+
+          showDays =
+            !showDays;
+
+          const t =
+            translations[currentLanguage];
+
+          toggle.textContent =
+            showDays
+              ? t.showCountdown
+              : t.showDays;
+
+          update();
+
+        }
+      );
+
+
+      /*
+       * Start progress bar at 0%.
+       */
+
+      progressFill.style.width =
+        "0%";
+
+
+      /*
+       * Set saved language.
+       */
+
+      setLanguage(
+        currentLanguage
+      );
+
+
+      /*
+       * Wait briefly before first update
+       * so the progress bar animates from 0%.
+       */
+
+      setTimeout(
+        () => {
+          update();
+        },
+        100
+      );
+
+
+      /*
+       * Update countdown every second.
+       */
+
+      setInterval(
+        update,
+        1000
+      );
+
+    </script>
+
+  </body>
+</html>
